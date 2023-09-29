@@ -1,0 +1,183 @@
+service: backend
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-west-2
+
+functions:
+  get_presigned_url:
+    handler: get_presigned_url.main
+    events:
+      - http:
+          path: /presigned-url
+          method: get
+          authorizer:
+            name: MyAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+    environment:
+      S3_BUCKET_NAME: !Ref S3Bucket
+    iamRoleStatementsName: presigned-url-lambda-role
+    iamRoleStatements:
+      - Effect: "Allow"        
+        Action:
+          - s3:PutObject     
+        Resource:
+          Fn::Join:
+            - ""
+            - - "arn:aws:s3:::"
+              - !Ref S3Bucket
+              - "/*"
+    layers:
+      - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
+
+  check_username_profanity:
+    handler: check_username_profanity.main
+    events:
+      - http:
+          path: /check-username-profanity
+          method: get
+          authorizer:
+            name: MyAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+    layers:
+      - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
+
+  detect_sentiment:
+    handler: detect_sentiment.main
+    events:
+      - http:
+          path: /detect-sentiment
+          method: post
+          authorizer:
+            name: MyAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+    iamRoleStatementsName: detect_sentiment_role
+    iamRoleStatements:
+      - Effect: "Allow"        
+        Action:
+          - comprehend:DetectSentiment   
+        Resource: "*"       
+    layers:
+      - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
+
+  feedback_on_game:
+    handler: feedback_on_game.main
+    events:
+      - http:
+          path: /feedback-on-game
+          method: post
+          authorizer:
+            name: MyAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+    iamRoleStatementsName: feedback_on_game
+    iamRoleStatements:
+      - Effect: "Allow"        
+        Action:
+          - bedrock:InvokeModel   
+        Resource: "arn:aws:bedrock:us-west-2::foundation-model/amazon.titan-tg1-large"
+    layers:
+      - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
+      - arn:aws:lambda:us-west-2:029877423340:layer:Boto3_Latest:2  # special version of boto that enables bedrock API
+
+  generate_avatar:
+    handler: generate_avatar.main
+    events:
+      - http:
+          path: /generate-avatar
+          method: post
+          authorizer:
+            name: MyAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - UserPool
+                - Arn
+            claims:
+              - email
+    iamRoleStatementsName: generate_avatar
+    iamRoleStatements:
+      - Effect: "Allow"        
+        Action:
+          - bedrock:InvokeModel   
+        Resource: "arn:aws:bedrock:us-west-2::foundation-model/stability.stable-diffusion-xl-v0"
+    layers:
+      - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
+      - arn:aws:lambda:${self:provider.region}:770693421928:layer:Klayers-p311-boto3:3 # latest version of boto with bedrock-runtime
+
+
+resources:
+  Resources:
+    UserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: serverless-auth-pool
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+        AutoVerifiedAttributes: ["email"]
+
+    UserClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: user-pool-ui
+        UserPoolId: { Ref: UserPool }
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        GenerateSecret: true
+        ExplicitAuthFlows:
+          - "ALLOW_USER_SRP_AUTH"
+          - "ALLOW_REFRESH_TOKEN_AUTH"
+    
+    S3Bucket:
+      Type: 'AWS::S3::Bucket'
+      DeletionPolicy: Retain
+      Properties:
+        BucketEncryption: 
+          ServerSideEncryptionConfiguration: 
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        VersioningConfiguration:
+          Status: Enabled
+
+
+plugins:
+  - serverless-better-credentials
+  - serverless-iam-roles-per-function
+
+
+package:
+  patterns:
+    - '!venv/**'
+    - '!.serverless/**'
+    - '!node_modules/**'

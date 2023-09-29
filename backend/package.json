@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "serverless-better-credentials": "^1.2.1",
+    "serverless-iam-roles-per-function": "^3.2.0"
+  }
+}

@@ -1,0 +1,4 @@
+venv/
+./frontend/auth_helper.py
+.DS_Store
+.idea/
