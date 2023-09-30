@@ -9,6 +9,7 @@ type: Load Balanced Web Service
 http:
   path: '/'
   healthcheck: '/'
+  stickiness: true
 
 image:
   build: Dockerfile

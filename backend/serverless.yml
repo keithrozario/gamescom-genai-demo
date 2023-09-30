@@ -14,15 +14,15 @@ functions:
       - http:
           path: /presigned-url
           method: get
-          authorizer:
-            name: MyAuthorizer
-            type: COGNITO_USER_POOLS
-            arn:
-              Fn::GetAtt:
-                - UserPool
-                - Arn
-            claims:
-              - email
+          # authorizer:
+          #   name: MyAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn:
+          #     Fn::GetAtt:
+          #       - UserPool
+          #       - Arn
+          #   claims:
+          #     - email
     environment:
       S3_BUCKET_NAME: !Ref S3Bucket
     iamRoleStatementsName: presigned-url-lambda-role
@@ -45,15 +45,15 @@ functions:
       - http:
           path: /check-username-profanity
           method: get
-          authorizer:
-            name: MyAuthorizer
-            type: COGNITO_USER_POOLS
-            arn:
-              Fn::GetAtt:
-                - UserPool
-                - Arn
-            claims:
-              - email
+          # authorizer:
+          #   name: MyAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn:
+          #     Fn::GetAtt:
+          #       - UserPool
+          #       - Arn
+          #   claims:
+          #     - email
     layers:
       - arn:aws:lambda:${self:provider.region}:017000801446:layer:AWSLambdaPowertoolsPythonV2:44
 
@@ -63,15 +63,15 @@ functions:
       - http:
           path: /detect-sentiment
           method: post
-          authorizer:
-            name: MyAuthorizer
-            type: COGNITO_USER_POOLS
-            arn:
-              Fn::GetAtt:
-                - UserPool
-                - Arn
-            claims:
-              - email
+          # authorizer:
+          #   name: MyAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn:
+          #     Fn::GetAtt:
+          #       - UserPool
+          #       - Arn
+          #   claims:
+          #     - email
     iamRoleStatementsName: detect_sentiment_role
     iamRoleStatements:
       - Effect: "Allow"        
@@ -87,15 +87,15 @@ functions:
       - http:
           path: /feedback-on-game
           method: post
-          authorizer:
-            name: MyAuthorizer
-            type: COGNITO_USER_POOLS
-            arn:
-              Fn::GetAtt:
-                - UserPool
-                - Arn
-            claims:
-              - email
+          # authorizer:
+          #   name: MyAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn:
+          #     Fn::GetAtt:
+          #       - UserPool
+          #       - Arn
+          #   claims:
+          #     - email
     iamRoleStatementsName: feedback_on_game
     iamRoleStatements:
       - Effect: "Allow"        
@@ -112,15 +112,16 @@ functions:
       - http:
           path: /generate-avatar
           method: post
-          authorizer:
-            name: MyAuthorizer
-            type: COGNITO_USER_POOLS
-            arn:
-              Fn::GetAtt:
-                - UserPool
-                - Arn
-            claims:
-              - email
+          # authorizer:
+          #   name: MyAuthorizer
+          #   type: COGNITO_USER_POOLS
+          #   arn:
+          #     Fn::GetAtt:
+          #       - UserPool
+          #       - Arn
+          #   claims:
+          #     - email
+    timeout: 28
     iamRoleStatementsName: generate_avatar
     iamRoleStatements:
       - Effect: "Allow"        

@@ -31,7 +31,7 @@ def main(event: dict, context: LambdaContext) -> dict:
         ),
         "cfg_scale": 28,
         "seed": random.randint(1, 4294967295),
-        "steps": 10
+        "steps": 80
     })
     modelId = "stability.stable-diffusion-xl-v0"
 
@@ -53,6 +53,3 @@ def main(event: dict, context: LambdaContext) -> dict:
         'statusCode': 200,
         'body': json.dumps(return_object)
     }
-
-    # response_image = Image.open(io.BytesIO(base64.decodebytes(bytes(base_64_img_str, "utf-8"))))
-    # response_image.save(f"/tmp/{character}.png")
