@@ -1,0 +1,5 @@
+README.MD
+copilot/
+.gitignore
+.streamlit/
+__pycache__/

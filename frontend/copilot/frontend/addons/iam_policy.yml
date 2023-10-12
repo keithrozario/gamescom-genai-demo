@@ -1,0 +1,25 @@
+Parameters:
+    App:
+        Type: String
+    Env:
+        Type: String
+    Name:
+        Type: String
+
+Resources:
+  AccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: BedRockInvokeModel
+            Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource: "*"
+
+Outputs:
+  AccessPolicyArn:
+    Description: "The ARN of the ManagedPolicy to attach to the task role."
+    Value: !Ref AccessPolicy

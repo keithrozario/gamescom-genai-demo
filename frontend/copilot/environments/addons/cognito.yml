@@ -1,0 +1,69 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+
+Resources:
+  MyUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "${Env}.${App}"
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      AutoVerifiedAttributes:
+        - email
+      VerificationMessageTemplate:
+        DefaultEmailOption: CONFIRM_WITH_CODE
+      UsernameAttributes:
+        - email
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient  
+    DependsOn: UserPoolResourceServer
+    Properties:
+      ClientName: !Sub "${Env}.${App}"
+      GenerateSecret: true
+      UserPoolId: !Ref MyUserPool
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthScopes:
+        - openid
+      CallbackURLs:
+        - https://${YOUR_ALIAS_NAME}/oauth2/idpresponse
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub "${Env}-${App}"
+      UserPoolId: !Ref MyUserPool
+
+  UserPoolResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      UserPoolId: !Ref MyUserPool
+      Identifier: !Sub "${Env}.${App}"
+      Name: !Sub "${Env}.${App}"
+      Scopes:
+        - ScopeName: "api.readwrite"
+          ScopeDescription: "All access"
+
+Outputs:
+  ClientId:
+    Value: !Ref UserPoolClient
+    Export:
+      Name: !Sub ${App}-${Env}-UserpoolClientId
+  UserpoolArn:
+    Value: !GetAtt MyUserPool.Arn
+    Export:
+      Name: !Sub ${App}-${Env}-UserpoolArn
+  UserpoolId:
+    Value: !Ref MyUserPool
+    Export:
+      Name: !Sub ${App}-${Env}-UserpoolId

@@ -1,0 +1,34 @@
+#  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
+
+
+name: frontend
+type: Load Balanced Web Service
+
+http:
+  path: '/'
+  healthcheck: '/'
+  stickiness: true
+  alias: gamescom.krozario.people.aws.dev
+  # hosted_zone: Z01638412VTKSGSBMLT0C
+
+
+image:
+  build: Dockerfile
+  port: 8501
+  additional_policy:
+    PolicyDocument:
+    Version: 2012-10-17
+    Statement:
+      - Effect: Allow
+        Action:
+          - bedrock:InvokeModel
+        Resource: '*'
+
+
+cpu: 1024      
+memory: 4096    
+count: 1       
+exec: true     
+network:
+  connect: true # Enable Service Connect for intra-environment traffic between services.
+

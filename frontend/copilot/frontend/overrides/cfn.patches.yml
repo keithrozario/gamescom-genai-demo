@@ -1,0 +1,24 @@
+- op: replace
+  path: /Resources/HTTPSListenerRule/Properties/Actions
+  value:
+    - Type: authenticate-cognito
+      AuthenticateCognitoConfig:
+        UserPoolArn:
+          Fn::ImportValue:
+            !Sub ${AppName}-${EnvName}-UserpoolArn
+        UserPoolClientId:
+          Fn::ImportValue:
+            !Sub ${AppName}-${EnvName}-UserpoolClientId
+        UserPoolDomain: !Sub ${EnvName}-${AppName}
+        SessionCookieName: AWSELBAuthSessionCookie
+        Scope: openid
+        SessionTimeout: 86400
+        AuthenticationRequestExtraParams:
+          display: page
+          prompt: login
+        OnUnauthenticatedRequest: authenticate
+      Order: 1
+
+    - TargetGroupArn: !Ref TargetGroup
+      Type: forward
+      Order: 2
