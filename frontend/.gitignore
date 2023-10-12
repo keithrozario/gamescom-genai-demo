@@ -1,4 +1,3 @@
-.DS_Store
 .streamlit/
 __pycache__/
 auth_helper.py

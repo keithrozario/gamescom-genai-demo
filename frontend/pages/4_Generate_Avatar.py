@@ -1,16 +1,31 @@
-import io
-import base64
 import streamlit as st
-from common_functions import generate_avatar
-from PIL import Image
+from backend_functions.generate_avatar import generate_avatar
+
+
+character_option = st.selectbox(
+    'What kind of Avatar would you like?',
+    ('Wizard', 'Assassin', 'Warrior', 'Android', 'Zombie'),
+    index=1,
+)
+
+character_era = st.selectbox(
+    'What kind of era would you like?',
+    ('Futuristic', 'Steampunk', 'Medieval', 'World War 2',
+     'Space-Age', 'Prehistoric', 'Post-apocalyptic '),
+     index=1,
+)
+
+character_gender = st.selectbox(
+    'Gender?',
+    ('Man', 'Woman', 'Non-Binary Character'),
+     index=1,
+)
 
 
 if st.button("Generate Avatar"):
-    response = generate_avatar(
-        character = "Assassin",
-        id_token = st.session_state["auth_id_token"]
+    avatar = generate_avatar(
+        character_era=character_era,
+        character_option=character_option,
+        character_gender=character_gender
     )
-    base_64_img_str = response["image"]
-    avatar = Image.open(io.BytesIO(base64.decodebytes(bytes(base_64_img_str, "utf-8"))))
-    
     st.image(avatar, caption='Your Avatar from Stability')
