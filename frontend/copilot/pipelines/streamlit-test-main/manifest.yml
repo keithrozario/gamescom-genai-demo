@@ -21,7 +21,7 @@ source:
     # connection_name: a-connection
 
 build:
-  buildspec: $CODEBUILD_SRC_DIR/frontend/copilot/pipelines/streamlit-test-main/buildspec.yml
+  buildspec: ./frontend/copilot/pipelines/streamlit-test-main/buildspec.yml
 
 # This section defines the order of the environments your pipeline will deploy to.
 stages:

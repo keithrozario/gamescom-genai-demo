@@ -1,6 +1,5 @@
 #  https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/
 
-
 name: frontend
 type: Load Balanced Web Service
 
@@ -13,17 +12,9 @@ http:
 
 
 image:
-  build: Dockerfile
+  build:
+    buildspec: ./frontend/copilot/pipelines/streamlit-test-main/buildspec.yml
   port: 8501
-  additional_policy:
-    PolicyDocument:
-    Version: 2012-10-17
-    Statement:
-      - Effect: Allow
-        Action:
-          - bedrock:InvokeModel
-        Resource: '*'
-
 
 cpu: 1024      
 memory: 4096    
