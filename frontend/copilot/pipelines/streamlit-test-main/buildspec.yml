@@ -6,21 +6,19 @@ phases:
       ruby: 3.1
       nodejs: 16
     commands:
-      - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
-      # Download the copilot linux binary.
+      - cd frontend  # directory with copilot in the repo
       - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.30.1 -O copilot-linux
       - chmod +x ./copilot-linux
   build:
     commands:
-      - echo "Run your tests"
-      # - make test
+      - echo "Pass Build"
   post_build:
     commands:
       - ls -l
       - export COLOR="false"
       - export CI="true"
-      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/streamlit-test-main/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
+      - pipeline=$(cat $CODEBUILD_SRC_DIR/frontend/copilot/pipelines/streamlit-test-main/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
       - pl_envs=$(echo $pipeline | jq -r '.stages[].name')
       # Find all the local services in the workspace.
       - svc_ls_result=$(./copilot-linux svc ls --local --json)
@@ -38,7 +36,7 @@ phases:
         fi
       # Raise error if no services or jobs are found.
       - >
-        if [ "$svc_list" = null ] && [ "$job_list" = null ]; then
+        if [ "$svc_list" = null ] && [ "$job_list" = null ]; thencoop
           echo "No services or jobs found for the pipeline to deploy. Please create at least one service or job and push the manifest to the remote." 1>&2;
           exit 1;
         fi
