@@ -36,7 +36,7 @@ phases:
         fi
       # Raise error if no services or jobs are found.
       - >
-        if [ "$svc_list" = null ] && [ "$job_list" = null ]; thencoop
+        if [ "$svc_list" = null ] && [ "$job_list" = null ]; then
           echo "No services or jobs found for the pipeline to deploy. Please create at least one service or job and push the manifest to the remote." 1>&2;
           exit 1;
         fi
