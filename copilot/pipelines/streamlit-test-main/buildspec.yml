@@ -7,19 +7,18 @@ phases:
       nodejs: 16
     commands:
       - cd $CODEBUILD_SRC_DIR
-      - cd frontend  # directory with copilot in the repo
-      - export CODEBUILD_SRC_DIR=$CODEBUILD_SRC_DIR/frontend
       - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.30.1 -O copilot-linux
       - chmod +x ./copilot-linux
   build:
     commands:
       - echo "Pass Build"
+
   post_build:
     commands:
       - ls -l
       - export COLOR="false"
       - export CI="true"
-      - pipeline=$(cat $CODEBUILD_SRC_DIR/frontend/copilot/pipelines/streamlit-test-main/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
+      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/streamlit-test-main/manifest.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
       - pl_envs=$(echo $pipeline | jq -r '.stages[].name')
       # Find all the local services in the workspace.
       - svc_ls_result=$(./copilot-linux svc ls --local --json)
