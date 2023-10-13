@@ -12,8 +12,7 @@ http:
 
 
 image:
-  build:
-    buildspec: ./frontend/copilot/pipelines/streamlit-test-main/buildspec.yml
+  build: Dockerfile
   port: 8501
 
 cpu: 1024      

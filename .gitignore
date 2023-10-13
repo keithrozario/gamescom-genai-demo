@@ -1,4 +1,7 @@
 venv/
-./frontend/auth_helper.py
+auth_helper.py
 .DS_Store
 .idea/
+.streamlit/
+__pycache__/
+auth_helper.py
