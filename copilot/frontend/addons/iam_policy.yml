@@ -16,7 +16,11 @@ Resources:
           - Sid: BedRockInvokeModel
             Effect: Allow
             Action:
-              - bedrock:InvokeModel
+              - bedrock:Invoke*
+            Resource: "*"
+          - Sid: ComprehendDetect
+            Effect: Allow
+            Action: comprehend:Detect*
             Resource: "*"
 
 Outputs:
