@@ -36,6 +36,7 @@ Resources:
               - es:ESHttpHead
               - es:List*
               - es:Describe*
+            Resource: "*"
 
 Outputs:
   AccessPolicyArn:
