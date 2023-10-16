@@ -20,8 +20,22 @@ Resources:
             Resource: "*"
           - Sid: ComprehendDetect
             Effect: Allow
-            Action: comprehend:Detect*
+            Action: 
+              - comprehend:Detect*
             Resource: "*"
+          - Sid: GetSecrets
+            Effect: Allow
+            Action: 
+              - secretsmanager:ListSecrets
+              - secretsmanager:GetSecretValue
+            Resource: "*"
+          - Sid: Opensearch
+            Effect: Allow
+            Action: 
+              - es:ESHttpGet
+              - es:ESHttpHead
+              - es:List*
+              - es:Describe*
 
 Outputs:
   AccessPolicyArn:
