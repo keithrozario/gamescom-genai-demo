@@ -19,7 +19,7 @@ def detect_sentiment(message: str) -> dict:
     return response
 
 
-def get_response(feedback: str) -> str:
+def get_response(feedback: str, sentiment: str) -> str:
     """
     Args:
         event['body']: Message to be analyzed
@@ -30,13 +30,24 @@ def get_response(feedback: str) -> str:
     bedrock_client = boto3.client('bedrock-runtime')
     bedrock_model_id = "anthropic.claude-v2"
   
-    prompt = f"Human: \
-    You are a polite customer service agent for a company that makes mobile games. \
-    A customer has just provided the feedback below, please provide a response that addresses complaint in the feedback. \
-    If the customer complains about the game being laggy, mention that there is a known issue on iOS version 12.0.1 that might be responsible. \
-    Here is the customers statement. \
-    '{feedback}' \n\n \
-    Assistant:"
+    if sentiment == "NEGATIVE":
+
+        prompt = f"Human: \
+        You are a polite customer service agent for a company that makes mobile games. \
+        A customer has just made a complaint, please provide a response that addresses each point in the complaint promising that we will improve. \
+        At the end apologize for the issues caused. \
+        Here is the customers statement. \
+        '{feedback}' \n\n \
+        Assistant:"
+    
+    else:
+
+        prompt = f"Human: \
+        You are a polite customer service agent for a company that makes mobile games. \
+        A customer has just provided  feedback, please provide a response that addresses any specific points in the feedback. \
+        Here is the customers statement. \
+        '{feedback}' \n\n \
+        Assistant:"
 
     body = json.dumps({
             "prompt": prompt,

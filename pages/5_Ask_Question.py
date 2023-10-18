@@ -18,8 +18,9 @@ opensearch_vector_search_client = create_opensearch_vector_search_client(index_n
 
 
 prompt_template = """ 
-You are a very polite customer service agent, who has received the following question from a user. The user is a player of a Game your company makes.
-Use the following pieces of context to provide and answer to the customer.
+You are a very polite customer service agent, who has received the following question from a user. The user is a player of a mobile game your company makes.
+Use the following pieces of context to answer the customer in the voice a customer service agent.
+
 
 {context}
 
@@ -28,9 +29,8 @@ Answer:"""
 PROMPT = PromptTemplate(
     template=prompt_template, input_variables=["context", "question"]
 )
-
-
-qa = RetrievalQA.from_chain_type(llm=bedrock_llm, 
+qa = RetrievalQA.from_chain_type(
+    llm=bedrock_llm,
                                     chain_type="stuff", 
                                     retriever=opensearch_vector_search_client.as_retriever(),
                                     return_source_documents=True,
@@ -38,7 +38,12 @@ qa = RetrievalQA.from_chain_type(llm=bedrock_llm,
                                     verbose=False)
 
 
+st.write("The following demo, takes in a user query, and performs a semantic search of the corpus of FAQs in the game before providing an answer via an LLM.")
+st.write("There is a known issue in this example game where the game becomes laggy in iOS after 30 minutes of play due to a memory leak. Try asking it questions about that.")
+
+
 question = st.text_area("Please enter your question below:")
 if st.button("Submit Question"):
-    response = qa(question, return_only_outputs=False)
+    with st.spinner(' '):
+        response = qa(question, return_only_outputs=False)
     st.write(f"{response.get('result')}")
