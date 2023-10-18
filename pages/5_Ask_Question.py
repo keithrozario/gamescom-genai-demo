@@ -39,11 +39,15 @@ qa = RetrievalQA.from_chain_type(
 
 
 st.write("The following demo, takes in a user query, and performs a semantic search of the corpus of FAQs in the game before providing an answer via an LLM.")
-st.write("There is a known issue in this example game where the game becomes laggy in iOS after 30 minutes of play due to a memory leak. Try asking it questions about that.")
+st.write("For example, there is a known issue in this example game where the game becomes laggy in iOS after 30 minutes of play. Try asking it questions about that.")
 
+with st.expander("View Architecture"):
+    st.image("./assets/Ask-Question-Arch.png")
 
 question = st.text_area("Please enter your question below:")
 if st.button("Submit Question"):
     with st.spinner(' '):
         response = qa(question, return_only_outputs=False)
     st.write(f"{response.get('result')}")
+
+
