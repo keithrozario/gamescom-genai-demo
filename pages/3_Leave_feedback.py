@@ -2,7 +2,8 @@ import streamlit as st
 import json
 from backend_functions.detect_sentiment import detect_sentiment, get_response
 
-st.write("This demo takes in feedback from user and performs sentinment analysis using AWS Comprehend, and after that generates a response to user using an LLM. The prompts for NEGATIVE or POSITIVE feedbacks are different")
+st.title("Leave Feedback")
+st.write("This demo takes in feedback from user and performs sentinment analysis using AWS Comprehend, after that it generates a response to user using an LLM. The prompts for NEGATIVE or POSITIVE feedbacks are different")
 
 
 feedback_text = st.text_area("Leave feedback on your experience")

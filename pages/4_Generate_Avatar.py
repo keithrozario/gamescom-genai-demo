@@ -1,6 +1,10 @@
 import streamlit as st
 from backend_functions.generate_avatar import generate_avatar
 
+st.title("Generate Avatar")
+st.write("This demo generates an avatar from the user given a series of choices. Not all choices produce good avatars (e.g. Prehistoric and Android don't go well together)")
+st.write("We use Bedrock and Stability to generate the avatar")
+
 
 character_option = st.selectbox(
     'What kind of Avatar would you like?',
